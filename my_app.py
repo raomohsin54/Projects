@@ -1,22 +1,20 @@
 import streamlit as st
+import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
 
-def app():
-    st.set_page_config(page_title="Pairplot using Streamlit", page_icon=":bar_chart:")
-    st.title("Pairplot of Penguin dataset")
+# Load iris dataset
+iris = sns.load_dataset('iris')
 
-    # Load dataset
-    df = sns.load_dataset("penguins")
+# Sidebar - Select features to plot
+st.sidebar.header('Select features')
+x_axis = st.sidebar.selectbox('X-axis', iris.columns[:-1])
+y_axis = st.sidebar.selectbox('Y-axis', iris.columns[:-1])
+hue = st.sidebar.selectbox('Color by', iris.columns[:-1])
 
-    # Show a progress bar while the visualization is loading
-    with st.spinner("Loading Visualization..."):
-        # Set style and plot
-        sns.set_style("ticks")
-        graph = sns.pairplot(df, hue="species")
+# Scatter plot
+fig = sns.scatterplot(x=x_axis, y=y_axis, hue=hue, data=iris)
+st.pyplot(fig)
 
-    # Show the plot using Streamlit
-    st.pyplot(graph.fig)
 
 if __name__ == '__main__':
     app()
