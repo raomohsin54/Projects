@@ -1,21 +1,16 @@
 import streamlit as st
-import pyodbc
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set_theme()
-# Some other example server values are
-# server = 'localhost\sqlexpress' # for a named instance
-# server = 'myserver,port' # to specify an alternate port
-server = 'kew-sql-06'
-database = 'Reporting'
-username = 'mohsin-admin'
-password = 'Welcome123ma'
-# ENCRYPT defaults to yes starting in ODBC Driver 18. It's good to always specify ENCRYPT=yes on the client side to avoid MITM attacks.
-cnxn = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER='+server+';DATABASE='+database+';ENCRYPT=no;UID='+username+';PWD='+ password)
 
+def app():
+    st.set_page_config(page_title="Pairplot using Streamlit", page_icon=":bar_chart:")
+    st.title("Pairplot of Penguin dataset")
 
-df = pd.read_sql_query('SELECT * FROM [Reporting].[dbo].[vwFR8Waybills]', cnxn)
+    # Load dataset
+    df = sns.load_dataset("penguins")
 
-st.write(df.head())
+    # Set style and plot
+    sns.set_style("ticks")
+    graph = sns.pairplot(df, hue="species")
+
+    # Show the plot using Streamlit
+    st.pyplot(graph.fig)
