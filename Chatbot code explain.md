@@ -34,4 +34,4 @@ Finally, st.markdown is used to display a footer on the page, indicating that th
 
 The st.markdown at the end sets the background color of the page to black.
 
-I hope this helps! Let me know if you have any questions.
+I hope this helps! Let me know if you have any questions
