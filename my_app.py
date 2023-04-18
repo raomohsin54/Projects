@@ -1,34 +1,39 @@
 import streamlit as st
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
+import os 
+import openai
+from dotenv import load_dotenv
 
-def app():
-    # Generate random data
-    np.random.seed(42)
-    data = pd.DataFrame({
-        'x': np.random.normal(0, 1, 100),
-        'y': np.random.normal(0, 1, 100)
-    })
+load_dotenv()
+openai.api_key = os.environ.get('OPENAI_API_KEY')
 
-    # Visualize data using a scatter plot
-    fig, ax = plt.subplots()
-    sns.scatterplot(x='x', y='y', data=data, ax=ax)
-    ax.set_title('Scatter plot of x vs. y')
-    st.pyplot(fig)
+def generate_response(prompt):
+    completion = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "user", "content":prompt}
+    ])
+    response = completion.choices[0].message.content
+    return response
 
-    # Visualize data using a histogram
-    fig, ax = plt.subplots()
-    sns.histplot(data['y'], bins=10, ax=ax)
-    ax.set_title('Histogram of y')
-    st.pyplot(fig)
+st.write(" Mohsin's bot")
 
-    # Visualize data using a box plot
-    fig, ax = plt.subplots()
-    sns.boxplot(y='y', data=data, ax=ax)
-    ax.set_title('Box plot of y')
-    st.pyplot(fig)
+if 'generated' not in st.session_state:
+    st.session_state['generated'] = ['i am ready to help you sir']
 
-if __name__ == '__main__':
-    app()
+if 'past' not in st.session_state:
+    st.session_state['past'] = ['hey there!']
+
+def get_text():
+    input_text = st.text_input("", key="input")
+    return input_text
+
+user_input = get_text()
+if user_input:
+    output = generate_response(user_input)
+    st.session_state.past.append(user_input)
+    st.session_state.generated.append(output)
+
+if st.session_state['generated']:
+    for i in range(len(st.session_state['generated'])-1, -1, -1):
+        message(st.session_state["generated"][i], key=str(i))
+        message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
