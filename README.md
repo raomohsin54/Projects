@@ -4,4 +4,10 @@ All of my code is written in Python and is available for you to use, modify, and
 
 In each project, you will find a detailed README file that explains the purpose of the project, the data sources used, the techniques employed, and the results obtained. The code is well-documented and follows best practices to ensure readability, reusability, and scalability.
 
-I hope that my projects inspire you and help you in your own data analysis and machine learning endeavors. If you have any questions or comments, please feel free to reach out to me on LinkedIn or Twitter. Thank you for visiting my repo!
+I hope that my projects inspire you and help you in your own data analysis and machine learning endeavors. If you have any questions or comments, please feel free to reach out to me on LinkedIn or Twitter. 
+
+https://www.linkedin.com/in/mohsin-mukhtiar/
+
+https://twitter.com/RaoMohsin54
+
+Thank you for visiting my repo!
