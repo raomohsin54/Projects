@@ -1,71 +1,106 @@
-import os
-import streamlit as st
 import pandas as pd
-import pydeck as pdk
+import streamlit as st
+from streamlit_folium import folium_static
+import folium
+import plotly.express as px
 
-# Set the Mapbox API key as an environment variable
-os.environ["MAPBOX_API_KEY"] = "pk.eyJ1IjoicmFvbW9oc2luNTQiLCJhIjoiY2xnbjc4cWxhMDJuODNranZhd210bmxhaCJ9.xvSUDLm8omTRDcNzci2wUA"
+# Load the data
+df = pd.read_csv(r"C:\Users\mmukhtiar\Downloads\Traffic_Count.csv")
 
-# Read in the data
-df = pd.read_excel(r"C:\Users\mmukhtiar\Downloads\Updated_Traffic_Count.xlsx")
+# Add a selectbox to filter by year
+years = sorted(df['Count_year'].unique())
+selected_year = st.selectbox('Select year', years)
 
-# Convert latitude and longitude to floats
-df["LATITUDE"] = df["LATITUDE"].astype(float)
-df["LONGITUDE"] = df["LONGITUDE"].astype(float)
+# Filter data by selected year
+df_year = df[df['Count_year'] == selected_year]
 
-# Define the filter options
-filter_options = df["BETWEEN_STREETS"].unique()
-filter_options = ["All"] + list(filter_options)
+# Create map
+m = folium.Map(location=[df_year['LATITUDE'].mean(), df_year['LONGITUDE'].mean()], zoom_start=12)
 
-# Create the filter widget
-selected_filter = st.sidebar.selectbox("Filter by trip between streets", filter_options)
+# Add markers to map
+for _, row in df_year.iterrows():
+    popup_text = f"<b>Speed limit:</b> {row['SPEED_LIMIT']} mph<br><b>Direction bound:</b> {row['DIRECTION_BOUND']}<br><b>Percent heavy vehicles:</b> {row['PERCENT_HEAVY_VEHICLES']}%"
+    marker = folium.Marker(location=[row["LATITUDE"], row["LONGITUDE"]], popup=popup_text, icon=folium.Icon(color='blue'))
+    marker.add_to(m)
 
-# Filter the data based on the selection
-if selected_filter == "All":
-    filtered_df = df
-else:
-    filtered_df = df[df["BETWEEN_STREETS"] == selected_filter]
+# Display map
+folium_static(m)
 
-# Define the initial view state of the map
-view_state = pdk.ViewState(
-    latitude=filtered_df["LATITUDE"].mean(),
-    longitude=filtered_df["LONGITUDE"].mean(),
-    zoom=10,
-    pitch=0,
-    bearing=0
-)
+# Display scatter plot
+scatter_fig = px.scatter(df_year, x="LONGITUDE", y="LATITUDE", color="SPEED_LIMIT")
+scatter_fig.update_traces(marker=dict(size=5, color='red'))
+scatter_fig.update_layout(title='Traffic Count Locations', xaxis_title='Longitude', yaxis_title='Latitude')
+st.plotly_chart(scatter_fig)
 
-# Define the color scale for commute
-color_scale = {
-    "Weekend": [0, 255, 0],
-    "Mon to Sun": [255, 255, 0],
-    "Mon to Fri": [255, 0, 0]
+# Display histogram
+hist_fig = px.histogram(df_year, x="SPEED_LIMIT")
+hist_fig.update_traces(marker=dict(color='green'))
+hist_fig.update_layout(title='Speed Limit Histogram', xaxis_title='Speed Limit', yaxis_title='Count')
+st.plotly_chart(hist_fig)
+
+# Display bar chart
+bar_fig = px.bar(df_year, x="DIRECTION_BOUND", y="PERCENT_HEAVY_VEHICLES")
+bar_fig.update_traces(marker=dict(color='purple'))
+bar_fig.update_layout(title='Percent Heavy Vehicles by Direction Bound', xaxis_title='Direction Bound', yaxis_title='Percent Heavy Vehicles')
+st.plotly_chart(bar_fig)
+
+
+# Add custom CSS styles
+style = """
+<style>
+body {
+    font-size: 16px;
+    line-height: 1.5;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-# Create the scatterplot layer to display the commute data
-layer = pdk.Layer(
-    "ScatterplotLayer",
-    data=filtered_df,
-    get_position=["LONGITUDE", "LATITUDE"],
-    get_radius=100,
-    get_fill_color=lambda row: color_scale.get(row["commute"], [255, 255, 255]),
-    get_line_color=[0, 0, 0],
-    pickable=True,
-    auto_highlight=True,
-    tooltip={"text": "{BETWEEN_STREETS}\nCommute: {Commute}\nTrips: {Both}"}
-)
+h1, h2, h3 {
+    font-weight: bold;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
 
-# Create the map and add the layer
-r = pdk.Deck(
-    map_style="mapbox://styles/mapbox/light-v9",
-    initial_view_state=view_state,
-    layers=[layer],
-)
+h1 {
+    font-size: 2.5rem;
+}
 
-# Display the filter and the map in Streamlit
-st.sidebar.markdown("# Traffic Data Filter")
-st.sidebar.markdown("Select streets to filter by:")
-st.sidebar.markdown("*(or select 'All' to see all data)*")
-st.sidebar.markdown("---")
-st.sidebar.write(selected_filter)
-st.pydeck_chart(r)
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+.streamlit-table {
+    font-size: 1rem;
+}
+
+.streamlit-selectbox {
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #f2f2f2;
+    border-radius: 4px;
+    border: none;
+    box-shadow: none;
+}
+
+.plotly-graph-div {
+    font-size: 1rem;
+}
+
+.mapboxgl-ctrl {
+    font-size: 1rem;
+}
+
+.mapboxgl-popup-content {
+    font-size: 1rem;
+}
+</style>
+"""
+
+st.markdown(style, unsafe_allow_html=True)
