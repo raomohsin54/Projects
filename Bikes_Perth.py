@@ -4,8 +4,10 @@ from streamlit_folium import folium_static
 import folium
 import plotly.express as px
 
+url= "https://github.com/raomohsin54/Projects/blob/main/Traffic_Count.csv"
+
 # Load the data
-df = pd.read_csv(r"C:\Users\mmukhtiar\Downloads\Traffic_Count.csv")
+df = pd.read_csv(url)
 
 # Add a selectbox to filter by year
 years = sorted(df['Count_year'].unique())
