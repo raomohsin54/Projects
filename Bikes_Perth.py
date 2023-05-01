@@ -4,10 +4,16 @@ from streamlit_folium import folium_static
 import folium
 import plotly.express as px
 
-url= "https://github.com/raomohsin54/Projects/blob/main/Traffic_Count.csv"
-
 # Load the data
-df = pd.read_csv(url)
+df = pd.read_csv(r"C:\Users\mmukhtiar\Downloads\Traffic_Count.csv")
+
+df['START_DATE'] = pd.to_datetime(df['START_DATE'])
+df['MONTH'] = df['START_DATE'].dt.month
+df = df.sort_values('MONTH')
+
+
+# Set page title and layout
+st.set_page_config(page_title="Perth Bike Data (2014 to 2019)", page_icon="🚲", layout="wide", initial_sidebar_state="auto")
 
 # Add a selectbox to filter by year
 years = sorted(df['Count_year'].unique())
@@ -15,9 +21,15 @@ selected_year = st.selectbox('Select year', years)
 
 # Filter data by selected year
 df_year = df[df['Count_year'] == selected_year]
+df_year['MONTH_NAME'] = df_year['START_DATE'].dt.month_name()
+df_year = df_year.sort_values(by='MONTH_NAME')
+
+
+# Create a new column for daily_totals
+df_year['daily_totals'] = df_year.groupby('START_DATE')['PRIMARY_KEY'].transform('count')
 
 # Create map
-m = folium.Map(location=[df_year['LATITUDE'].mean(), df_year['LONGITUDE'].mean()], zoom_start=12)
+m = folium.Map(location=[df_year['LATITUDE'].mean(), df_year['LONGITUDE'].mean()], zoom_start=12, tiles='CartoDB dark_matter')
 
 # Add markers to map
 for _, row in df_year.iterrows():
@@ -26,83 +38,33 @@ for _, row in df_year.iterrows():
     marker.add_to(m)
 
 # Display map
+st.subheader("Map of Traffic Count Locations")
 folium_static(m)
 
 # Display scatter plot
 scatter_fig = px.scatter(df_year, x="LONGITUDE", y="LATITUDE", color="SPEED_LIMIT")
 scatter_fig.update_traces(marker=dict(size=5, color='red'))
-scatter_fig.update_layout(title='Traffic Count Locations', xaxis_title='Longitude', yaxis_title='Latitude')
+scatter_fig.update_layout(title='Traffic Count Locations', xaxis_title='Longitude', yaxis_title='Latitude', font=dict(color='black'))
+st.subheader("Scatter Plot of Traffic Count Locations")
 st.plotly_chart(scatter_fig)
 
 # Display histogram
 hist_fig = px.histogram(df_year, x="SPEED_LIMIT")
 hist_fig.update_traces(marker=dict(color='green'))
-hist_fig.update_layout(title='Speed Limit Histogram', xaxis_title='Speed Limit', yaxis_title='Count')
+hist_fig.update_layout(title='Speed Limit Histogram', xaxis_title='Speed Limit', yaxis_title='Count', font=dict(color='black'))
+st.subheader("Histogram of Speed Limits")
 st.plotly_chart(hist_fig)
 
 # Display bar chart
 bar_fig = px.bar(df_year, x="DIRECTION_BOUND", y="PERCENT_HEAVY_VEHICLES")
 bar_fig.update_traces(marker=dict(color='purple'))
-bar_fig.update_layout(title='Percent Heavy Vehicles by Direction Bound', xaxis_title='Direction Bound', yaxis_title='Percent Heavy Vehicles')
+bar_fig.update_layout(title='Percent Heavy Vehicles by Direction Bound', xaxis_title='Direction Bound', yaxis_title='Percent Heavy Vehicles', font=dict(color='black'))
+st.subheader("Bar Chart of Percent Heavy Vehicles by Direction Bound")
 st.plotly_chart(bar_fig)
 
-
-# Add custom CSS styles
-style = """
-<style>
-body {
-    font-size: 16px;
-    line-height: 1.5;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-}
-
-h1, h2, h3 {
-    font-weight: bold;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-}
-
-h1 {
-    font-size: 2.5rem;
-}
-
-h2 {
-    font-size: 2rem;
-}
-
-h3 {
-    font-size: 1.5rem;
-}
-
-p {
-    margin-bottom: 1rem;
-}
-
-.streamlit-table {
-    font-size: 1rem;
-}
-
-.streamlit-selectbox {
-    font-size: 1rem;
-    padding: 0.25rem 0.5rem;
-    background-color: #f2f2f2;
-    border-radius: 4px;
-    border: none;
-    box-shadow: none;
-}
-
-.plotly-graph-div {
-    font-size: 1rem;
-}
-
-.mapboxgl-ctrl {
-    font-size: 1rem;
-}
-
-.mapboxgl-popup-content {
-    font-size: 1rem;
-}
-</style>
-"""
-
-st.markdown(style, unsafe_allow_html=True)
+# Display line chart
+line_fig = px.line(df_year, x="MONTH_NAME", y="daily_totals")
+line_fig.update_traces(mode='lines+markers')
+line_fig.update_layout(title='Daily Traffic Volume by Month', xaxis_title='Month', yaxis_title='Traffic Volume', font=dict(color='black'))
+st.subheader("Line Chart of Daily Traffic Volume by Month")
+st.plotly_chart(line_fig)
