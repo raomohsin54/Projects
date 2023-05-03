@@ -10,4 +10,4 @@ folium
 streamlit_folium
 pillow
 pandasai
-pandasai.llm.openai
+openai
