@@ -30,8 +30,8 @@ img {
 # Render styles
 st.markdown(styles, unsafe_allow_html=True)
 
-image = Image.open(r"C:\Users\mmukhtiar\Downloads\20-Easy-Call-Center-Sales-Tips-to-Increase-Sales-1024x536.png")
-image2 = Image.open(r"C:\Users\mmukhtiar\Downloads\sales-prediction.jpg")
+image = Image.open("https://github.com/raomohsin54/Projects/blob/main/Learn/20-Easy-Call-Center-Sales-Tips-to-Increase-Sales-1024x536.png")
+image2 = Image.open("https://github.com/raomohsin54/Projects/blob/main/Learn/sales-prediction.jpg")
 
 # Define header
 header = st.container()
