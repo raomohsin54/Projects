@@ -71,7 +71,6 @@ with content:
     plt.title("Scatterplot of Sales")
     st.pyplot(fig)
 
-# Define sidebar
 sidebar = st.sidebar
 with sidebar:
     ##st.image(image2)
