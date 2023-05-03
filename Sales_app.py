@@ -91,4 +91,4 @@ with sidebar:
                 st.write("### Insights")
                 st.write(result)
         except pandasai.exceptions.APIKeyNotFoundError:
-            st.warning("This app is for demo use your own app Open API Key")
+            st.warning("This app is for demo, use your own app Open API Key to generate insights")
