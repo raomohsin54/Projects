@@ -78,14 +78,14 @@ with sidebar:
     st.write("Enter a prompt to generate insights about the data using PandasAI and OpenAI.")
     prompt = st.text_input("Enter your prompt:")
     if prompt:
-        # Initialize PandasAI and OpenAI
-        llm = OpenAI()
-        pandas_ai = PandasAI(llm)
-
         try:
+            # Initialize PandasAI and OpenAI
+            llm = OpenAI()
+            pandas_ai = PandasAI(llm)
+            
             # Run PandasAI with user input prompt
             result = pandas_ai.run(sale_df, prompt=prompt)
-
+            
             # Display result
             if result is not None:
                 st.write("### Insights")
