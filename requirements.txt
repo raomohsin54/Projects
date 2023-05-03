@@ -8,6 +8,6 @@ pydeck
 plotly.express
 folium
 streamlit_folium
-pil
+PIL
 pandasai
 pandasai.llm.openai
