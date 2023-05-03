@@ -32,18 +32,18 @@ img {
 # Render styles
 st.markdown(styles, unsafe_allow_html=True)
 
-url = "https://github.com/raomohsin54/Projects/blob/main/Learn/20-Easy-Call-Center-Sales-Tips-to-Increase-Sales-1024x536.png"
+'''url = "https://github.com/raomohsin54/Projects/blob/main/Learn/20-Easy-Call-Center-Sales-Tips-to-Increase-Sales-1024x536.png"
 image_data = urllib.request.urlopen(url).read()
 image = Image.open(BytesIO(image_data))
 
 url2 = "https://github.com/raomohsin54/Projects/blob/main/Learn/sales-prediction.jpg"
 image_data_2 = urllib.request.urlopen(url2).read()
-image2 = Image.open(BytesIO(image_data_2))
+image2 = Image.open(BytesIO(image_data_2))'''
 
 # Define header
 header = st.container()
 with header:
-    st.image(image)
+    ##st.image(image)
     st.title("Sales Analysis App")
     st.markdown("Use this Streamlit app to analyze your sales!")
     st.write("")
@@ -79,7 +79,7 @@ with content:
 # Define sidebar
 sidebar = st.sidebar
 with sidebar:
-    st.image(image2)
+    ##st.image(image2)
     st.subheader("Get insights about the data")
     st.write("Enter a prompt to generate insights about the data using PandasAI and OpenAI.")
     prompt = st.text_input("Enter your prompt:")
