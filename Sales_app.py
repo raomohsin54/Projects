@@ -7,6 +7,7 @@ import seaborn as sns
 from PIL import Image
 import urllib.request
 from io import BytesIO
+import pandasai.exceptions
 
 
 # Set page configuration
@@ -81,11 +82,14 @@ with sidebar:
         # Initialize PandasAI and OpenAI
         llm = OpenAI()
         pandas_ai = PandasAI(llm)
-        
-        # Run PandasAI with user input prompt
-        result = pandas_ai.run(sale_df, prompt=prompt)
-        
-        # Display result
-        if result is not None:
-            st.write("### Insights")
-            st.write(result)
+
+        try:
+            # Run PandasAI with user input prompt
+            result = pandas_ai.run(sale_df, prompt=prompt)
+
+            # Display result
+            if result is not None:
+                st.write("### Insights")
+                st.write(result)
+        except pandasai.exceptions.APIKeyNotFoundError:
+            st.warning("This app is for demo use your own app Open API Key")
