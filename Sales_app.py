@@ -5,6 +5,8 @@ from pandasai.llm.openai import OpenAI
 import matplotlib.pyplot as plt
 import seaborn as sns
 from PIL import Image
+import urllib.request
+from io import BytesIO
 
 
 # Set page configuration
@@ -30,8 +32,13 @@ img {
 # Render styles
 st.markdown(styles, unsafe_allow_html=True)
 
-image = Image.open(r"C:\Users\mmukhtiar\Downloads\20-Easy-Call-Center-Sales-Tips-to-Increase-Sales-1024x536.png")
-image2 = Image.open(r"C:\Users\mmukhtiar\Downloads\sales-prediction.jpg")
+url = "https://github.com/raomohsin54/Projects/blob/main/Learn/20-Easy-Call-Center-Sales-Tips-to-Increase-Sales-1024x536.png"
+image_data = urllib.request.urlopen(url).read()
+image = Image.open(BytesIO(image_data))
+
+url2 = "https://github.com/raomohsin54/Projects/blob/main/Learn/sales-prediction.jpg"
+image_data_2 = urllib.request.urlopen(url2).read()
+image2 = Image.open(BytesIO(image_data_2))
 
 # Define header
 header = st.container()
