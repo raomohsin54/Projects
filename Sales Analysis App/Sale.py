@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from PIL import Image
 import urllib.request
+from io import BytesIO
+
 
 
 # Set page configuration
