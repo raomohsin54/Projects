@@ -9,7 +9,6 @@ import urllib.request
 from io import BytesIO
 import pandasai.exceptions
 
-
 # Set page configuration
 st.set_page_config(
     page_title="Sales Analysis App",
@@ -33,28 +32,20 @@ img {
 # Render styles
 st.markdown(styles, unsafe_allow_html=True)
 
-
-
 # Define header
 header = st.container()
 with header:
-    ##st.image(image)
     st.title("Sales Analysis App")
     st.markdown("Use this Streamlit app to analyze your sales!")
     st.write("")
 
-# Define main content
+# Load sales dataset
+sale_url = "https://github.com/raomohsin54/Projects/blob/main/sales_data_sample.csv?raw=true"
+sale_df = pd.read_csv(sale_url, encoding='latin-1')
+
+# Select x and y variables
 content = st.container()
 with content:
-    # Load sales dataset
-    sale_file = st.file_uploader('Select Your Local Sales CSV (default provided)')
-    if sale_file is not None:
-        sale_df = pd.read_csv(sale_file, encoding='latin-1')
-    else:
-        st.warning("Please select a CSV file to continue.")
-        st.stop()
-
-    # Select x and y variables
     st.subheader("Create a scatterplot")
     st.write("Select the x and y variables to create a scatterplot.")
     col1, col2 = st.beta_columns(2)
@@ -71,9 +62,9 @@ with content:
     plt.title("Scatterplot of Sales")
     st.pyplot(fig)
 
+# Get insights about the data using PandasAI and OpenAI
 sidebar = st.sidebar
 with sidebar:
-    ##st.image(image2)
     st.subheader("Get insights about the data")
     st.write("Enter a prompt to generate insights about the data using PandasAI and OpenAI.")
     prompt = st.text_input("Enter your prompt:")
